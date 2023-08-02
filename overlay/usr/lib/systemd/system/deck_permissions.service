@@ -1,0 +1,9 @@
+[Unit]
+Description=set device node permissions for steamdeck
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/deck_permissions.sh
+
+[Install]
+WantedBy=graphical.target
