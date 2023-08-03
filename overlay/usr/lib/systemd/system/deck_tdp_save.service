@@ -1,0 +1,11 @@
+[Unit]
+Description=save deck tdp
+Before=systemd-suspend.service systemd-hybrid-sleep.service systemd-hibernate.service poweroff.target reboot.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/deck_tdp_save_restore.sh save
+
+[Install]
+WantedBy=sleep.target poweroff.target reboot.target

@@ -1,0 +1,10 @@
+[Unit]
+Description=restore deck tdp
+After=systemd-suspend.service systemd-hybrid-sleep.service systemd-hibernate.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/libexec/deck_tdp_save_restore.sh restore
+
+[Install]
+WantedBy=sleep.target graphical.target
