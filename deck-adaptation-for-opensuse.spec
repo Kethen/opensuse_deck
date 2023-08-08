@@ -23,6 +23,8 @@ Requires: gstreamer-1.20-plugin-openh264
 Requires: ibus
 Requires: breeze5-cursors
 Requires: gamescope
+Requires: onboard
+Requires: xinput
 
 %description
 Tweaks for running opensuse on the steam deck, includes saving and restoring TDP, setting /sys node permissions and a gamescope session
@@ -34,6 +36,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 
 %files
 %defattr(-,root,root)
+/etc/sudoers.d/99_deck
 /usr/bin/gamescope_janked_session
 /usr/bin/jupiter-biosupdate
 /usr/bin/steamos-update
@@ -48,6 +51,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/lib/systemd/system/sleep.target.wants/deck_tdp_save.service
 /usr/libexec/deck_permissions.sh
 /usr/libexec/deck_tdp_save_restore.sh
+/usr/share/applications/stop_steam.desktop
 /usr/share/icons/steam/cursors/arrow
 /usr/share/icons/steam/cursors/default
 /usr/share/icons/steam/cursors/left_ptr
@@ -58,7 +62,6 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/steamos/steamos-cursor.png
 /usr/share/steamos/steamos.png
 /usr/share/wayland-sessions/gamescope_janked.desktop
-/etc/sudoers.d/99_deck
 
 %changelog
 * Tue Aug 08 2023 Katharine Chui <kwchuiaa@connect.ust.hk> - 0.1
