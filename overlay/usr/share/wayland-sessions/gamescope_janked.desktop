@@ -2,6 +2,6 @@
 Encoding=UTF-8
 Name=SteamOS Gamescope Session
 Comment=SteamOS Big Picture session
-Exec=/bin/bash -c 'gamescope_janked_session 2>&1 | tee /tmp/gamescope_session_log'
+Exec=/usr/bin/gamescope_janked_session
 Type=Application
 DesktopNames=gamescope

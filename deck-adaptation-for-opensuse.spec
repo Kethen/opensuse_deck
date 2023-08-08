@@ -49,8 +49,10 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/lib/systemd/system/reboot.target.wants/deck_tdp_save.service
 /usr/lib/systemd/system/sleep.target.wants/deck_tdp_restore.service
 /usr/lib/systemd/system/sleep.target.wants/deck_tdp_save.service
-/usr/libexec/deck_permissions.sh
+/usr/lib/sddm/sddm.conf.d/12-sddm_deck_screen_rotate.conf
 /usr/libexec/deck_tdp_save_restore.sh
+/usr/libexec/deck_permissions.sh
+/usr/libexec/sddm_deck_screen_rotate.sh
 /usr/share/applications/stop_steam.desktop
 /usr/share/icons/steam/cursors/arrow
 /usr/share/icons/steam/cursors/default
