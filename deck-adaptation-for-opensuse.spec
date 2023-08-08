@@ -58,12 +58,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/steamos/steamos-cursor.png
 /usr/share/steamos/steamos.png
 /usr/share/wayland-sessions/gamescope_janked.desktop
-
-%triggerin -- deck-adaptation-for-opensuse
-echo '%_deck ALL = NOPASSWD: /usr/bin/steamos-update, /usr/bin/jupiter-biosupdate' > /etc/sudoers.d/99_deck
-
-%triggerun -- deck-adaptation-for-opensuse
-rm /etc/sudoers.d/99_deck
+/etc/sudoers.d/99_deck
 
 %changelog
 * Tue Aug 08 2023 Katharine Chui <kwchuiaa@connect.ust.hk> - 0.1
