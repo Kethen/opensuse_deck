@@ -1,5 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Stop Steam
-Exec=/bin/bash -c 'killall -KILL steam'
-Icon=steam
