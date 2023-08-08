@@ -40,6 +40,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/bin/gamescope_janked_session
 /usr/bin/jupiter-biosupdate
 /usr/bin/steamos-update
+/usr/bin/steamos-session-select
 /usr/lib/systemd/system/deck_permissions.service
 /usr/lib/systemd/system/deck_tdp_restore.service
 /usr/lib/systemd/system/deck_tdp_save.service
@@ -53,7 +54,6 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/libexec/deck_tdp_save_restore.sh
 /usr/libexec/deck_permissions.sh
 /usr/libexec/sddm_deck_screen_rotate.sh
-/usr/share/applications/stop_steam.desktop
 /usr/share/icons/steam/cursors/arrow
 /usr/share/icons/steam/cursors/default
 /usr/share/icons/steam/cursors/left_ptr
