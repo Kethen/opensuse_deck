@@ -26,6 +26,7 @@ Requires: ibus
 Requires: breeze5-cursors
 Requires: gamescope
 Requires: xinput
+Requires: xrandr
 
 %description
 Tweaks for running opensuse on the steam deck, includes saving and restoring TDP, setting /sys node permissions and a gamescope session
