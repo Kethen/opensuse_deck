@@ -8,6 +8,8 @@ ExclusiveArch: x86_64
 Source0: overlay
 Requires: libvulkan_radeon
 Requires: libvulkan_radeon-32bit
+Requires: libvulkan_intel
+Requires: libvulkan_intel-32bit
 Requires: vulkan-tools
 Requires: vulkan-tools-32bit
 Requires: Mesa
@@ -23,7 +25,6 @@ Requires: gstreamer-1.20-plugin-openh264
 Requires: ibus
 Requires: breeze5-cursors
 Requires: gamescope
-Requires: onboard
 Requires: xinput
 
 %description
