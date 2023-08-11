@@ -68,6 +68,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/steamos/steamos-cursor.png
 /usr/share/steamos/steamos.png
 /usr/share/wayland-sessions/gamescope_janked.desktop
+/usr/share/polkit-1/rules.d/70-deck-nm.rules
 
 %changelog
 * Tue Aug 08 2023 Katharine Chui <kwchuiaa@connect.ust.hk> - 0.1
