@@ -1,1 +1,1 @@
-%_deck ALL = NOPASSWD: /usr/bin/steamos-update, /usr/bin/jupiter-biosupdate
+%_deck ALL = NOPASSWD: /usr/bin/steamos-update, /usr/bin/jupiter-biosupdate, /usr/bin/timedatectl
