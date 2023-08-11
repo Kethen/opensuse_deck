@@ -1,0 +1,19 @@
+{
+    "id": "500f751a3a181fe55dc6840753b7f8ab",
+    "metadata": {
+        "fullname": "xrandr-Valve Corporation-ANX7530 U-1",
+        "name": "eDP-1"
+    },
+    "mode": {
+        "refresh": 59.9985466003418,
+        "size": {
+            "height": 1280,
+            "width": 800
+        }
+    },
+    "overscan": 0,
+    "rgbrange": 0,
+    "rotation": 8,
+    "scale": 1,
+    "vrrpolicy": 2
+}
