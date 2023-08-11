@@ -41,6 +41,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /etc/sudoers.d/99_deck
 /etc/skel/.local/share/kscreen/5d78196844f9468bd2c22ad4cf90b67d
 /etc/skel/.local/share/kscreen/outputs/500f751a3a181fe55dc6840753b7f8ab
+/etc/modules-load.d/uinput.conf
 /usr/bin/gamescope_janked_session
 /usr/bin/jupiter-biosupdate
 /usr/bin/steamos-update
