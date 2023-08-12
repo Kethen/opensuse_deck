@@ -55,6 +55,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/lib/systemd/system/reboot.target.wants/deck_tdp_save.service
 /usr/lib/systemd/system/sleep.target.wants/deck_tdp_restore.service
 /usr/lib/systemd/system/sleep.target.wants/deck_tdp_save.service
+/usr/lib/systemd/logind.conf.d/deck_power_key.conf
 /usr/lib/sddm/sddm.conf.d/12-sddm_deck_screen_rotate.conf
 /usr/libexec/deck_tdp_save_restore.sh
 /usr/libexec/deck_permissions.sh
