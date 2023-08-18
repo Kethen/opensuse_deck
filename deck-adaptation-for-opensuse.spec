@@ -72,6 +72,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/wayland-sessions/gamescope_janked.desktop
 /usr/share/polkit-1/rules.d/70-deck-nm.rules
 /usr/share/polkit-1/rules.d/70-deck-time.rules
+/usr/share/polkit-1/rules.d/70-deck-hostname.rules
 
 %changelog
 * Tue Aug 08 2023 Katharine Chui <kwchuiaa@connect.ust.hk> - 0.1
