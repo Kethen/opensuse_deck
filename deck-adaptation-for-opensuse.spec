@@ -69,7 +69,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/steamos/steamos-cursor-config
 /usr/share/steamos/steamos-cursor.png
 /usr/share/steamos/steamos.png
-/usr/share/wayland-sessions/gamescope_janked.desktop
+/usr/share/wayland-sessions/zzz_gamescope_janked.desktop
 /usr/share/polkit-1/rules.d/70-deck-nm.rules
 /usr/share/polkit-1/rules.d/70-deck-time.rules
 /usr/share/polkit-1/rules.d/70-deck-hostname.rules
