@@ -46,6 +46,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/bin/jupiter-biosupdate
 /usr/bin/steamos-update
 /usr/bin/steamos-session-select
+/usr/bin/steamos-select-branch
 /usr/lib/systemd/system/deck_permissions.service
 /usr/lib/systemd/system/deck_tdp_restore.service
 /usr/lib/systemd/system/deck_tdp_save.service
