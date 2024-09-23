@@ -110,13 +110,16 @@ export STEAM_DISABLE_AUDIO_DEVICE_SWITCHING=1
 export STEAM_MULTIPLE_XWAYLANDS=1
 
 # We have the Mesa integration for the fifo-based dynamic fps-limiter
+# no we actually don't, turn vsync on in-game for the fps limiter to work
 export STEAM_GAMESCOPE_DYNAMIC_FPSLIMITER=1
 
 # Support for gamescope tearing with GAMESCOPE_ALLOW_TEARING atom
 export STEAM_GAMESCOPE_HAS_TEARING_SUPPORT=1
 
-# We have gamma/degamma exponent support
-export STEAM_GAMESCOPE_COLOR_TOYS=1
+# Color management
+# does not work properly with opensuse packaged gamescope atm as of writing
+export STEAM_GAMESCOPE_COLOR_MANAGED=1
+export STEAM_GAMESCOPE_VIRTUAL_WHITE=1
 
 # We have NIS support
 export STEAM_GAMESCOPE_NIS_SUPPORTED=1
@@ -125,7 +128,13 @@ export STEAM_GAMESCOPE_NIS_SUPPORTED=1
 export STEAM_GAMESCOPE_TEARING_SUPPORTED=1
 
 # Enable VRR controls in steam
-#export STEAM_GAMESCOPE_VRR_SUPPORTED=1
+export STEAM_GAMESCOPE_VRR_SUPPORTED=1
+
+# Enable HDR support in steam
+export STEAM_GAMESCOPE_HDR_SUPPORTED=1
+
+# We fancy
+export STEAM_GAMESCOPE_FANCY_SCALING_SUPPORT=1
 
 # When set to 1, a toggle will show up in the steamui to control whether dynamic refresh rate is applied to the steamui
 export STEAM_GAMESCOPE_DYNAMIC_REFRESH_IN_STEAM_SUPPORTED=0
@@ -162,6 +171,15 @@ export QT_QPA_PLATFORM_THEME=kde
 # Remove vsync handling from Xwayland, we handle it in gamescope
 #export vblank_mode=0
 #export MESA_VK_WSI_PRESENT_MODE=immediate
+
+# in theory reduces latency, but it seems to use more cpu than xwayland, not great on handheld currently
+export ENABLE_GAMESCOPE_WSI=0
+
+# not sure when one would want this
+#export GAMESCOPE_DISABLE_ASYNC_FLIPS=1
+
+# no CEC support huh
+export STEAM_ENABLE_CEC=0
 
 # To play nice with the short term callback-based limiter for now
 export GAMESCOPE_LIMITER_FILE=$(mktemp /tmp/gamescope-limiter.XXXXXXXX)
