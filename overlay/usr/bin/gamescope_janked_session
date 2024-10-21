@@ -1,20 +1,12 @@
 #!/bin/bash
 
-use_wine_cpu_topology_hack=false
-steam_fan_control=false
-steam_can_unmount=false
+## switches
+deploy_bootstrap=false
 free_disk_space=false
-steamos_automounts=false
-power_button_handler=false
-sentinels=false
-short_session_detection=false
-start_steam_outside_of_gamescope=true
-
-# env bits from start-gamescope-session
-export XDG_SESSION_TYPE=x11
-export XDG_DESKTOP_PORTAL_DIR=""
-#export DISPLAY=""
-#export XAUTHORITY=""
+enable_powerbuttond=false
+cpu_topology_hack=false
+use_sentinels=false
+fan_control=false
 
 ##
 ## Session globals
@@ -24,6 +16,7 @@ export SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0
 export HOMETEST_DESKTOP=1
 export HOMETEST_DESKTOP_SESSION=plasma
 
+export STEAM_MANGOAPP_PRESETS_SUPPORTED=1
 export STEAM_USE_MANGOAPP=1
 export MANGOHUD_CONFIGFILE=$(mktemp /tmp/mangohud.XXXXXXXX)
 
@@ -32,6 +25,7 @@ export RADV_FORCE_VRS_CONFIG_FILE=$(mktemp /tmp/radv_vrs.XXXXXXXX)
 
 # Plop GAMESCOPE_MODE_SAVE_FILE into $XDG_CONFIG_HOME (defaults to ~/.config).
 export GAMESCOPE_MODE_SAVE_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/gamescope/modes.cfg"
+export GAMESCOPE_PATCHED_EDID_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/gamescope/edid.bin"
 
 # There is no way to set a color space for an NV12
 # buffer in Wayland. And the color management protocol that is
@@ -40,10 +34,17 @@ export GAMESCOPE_MODE_SAVE_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/gamescope/mod
 # and Gamescope will use for now.
 export GAMESCOPE_NV12_COLORSPACE=k_EStreamColorspace_BT601
 
+export STEAM_GAMESCOPE_HDR_SUPPORTED=1
+
 # Make path to gamescope mode save file.
 mkdir -p "$(dirname "$GAMESCOPE_MODE_SAVE_FILE")"
 touch "$GAMESCOPE_MODE_SAVE_FILE"
 echo "Making Gamescope Mode Save file at \"$GAMESCOPE_MODE_SAVE_FILE\""
+
+# Make path to Gamescope edid patched file.
+mkdir -p "$(dirname "$GAMESCOPE_PATCHED_EDID_FILE")"
+touch "$GAMESCOPE_PATCHED_EDID_FILE"
+echo "Making Gamescope patched edid at \"$GAMESCOPE_PATCHED_EDID_FILE\""
 
 # Initially write no_display to our config file
 # so we don't get mangoapp showing up before Steam initializes
@@ -59,7 +60,7 @@ echo "1x1" > "$RADV_FORCE_VRS_CONFIG_FILE"
 # Let's try this across the board to see if it breaks anything
 # Helps performance in HZD, Cyberpunk, at least
 # Expose 8 physical cores, instead of 4c/8t
-if $use_wine_cpu_topology_hack
+if $cpu_topology_hack
 then
 	export WINE_CPU_TOPOLOGY=8:0,1,2,3,4,5,6,7
 fi
@@ -67,10 +68,10 @@ fi
 # To expose vram info from radv's patch we're including
 export WINEDLLOVERRIDES=dxgi=n
 
-if $sentinels
+if $use_sentinels
 then
-# Workaround for steam getting killed immediatly during reboot
-# See: jupiter/tasks/-/issues/280
+	# Workaround for steam getting killed immediatly during reboot
+	# See: jupiter/tasks/-/issues/280
 	export STEAMOS_STEAM_REBOOT_SENTINEL="/tmp/steamos-reboot-sentinel"
 	if [[ -e "$STEAMOS_STEAM_REBOOT_SENTINEL" ]]; then
 		rm -f "$STEAMOS_STEAM_REBOOT_SENTINEL"
@@ -92,7 +93,8 @@ fi
 export STEAM_ENABLE_DYNAMIC_BACKLIGHT=1
 
 # Enabled fan control toggle in steam
-if $steam_fan_control
+# don't have that
+if $fan_control
 then
 	export STEAM_ENABLE_FAN_CONTROL=1
 fi
@@ -115,9 +117,6 @@ export STEAM_GAMESCOPE_DYNAMIC_FPSLIMITER=1
 # Support for gamescope tearing with GAMESCOPE_ALLOW_TEARING atom
 export STEAM_GAMESCOPE_HAS_TEARING_SUPPORT=1
 
-# We have gamma/degamma exponent support
-export STEAM_GAMESCOPE_COLOR_TOYS=1
-
 # We have NIS support
 export STEAM_GAMESCOPE_NIS_SUPPORTED=1
 
@@ -125,28 +124,42 @@ export STEAM_GAMESCOPE_NIS_SUPPORTED=1
 export STEAM_GAMESCOPE_TEARING_SUPPORTED=1
 
 # Enable VRR controls in steam
-#export STEAM_GAMESCOPE_VRR_SUPPORTED=1
+export STEAM_GAMESCOPE_VRR_SUPPORTED=1
 
 # When set to 1, a toggle will show up in the steamui to control whether dynamic refresh rate is applied to the steamui
 export STEAM_GAMESCOPE_DYNAMIC_REFRESH_IN_STEAM_SUPPORTED=0
 
+# Allow status LED brightness control
+export STEAM_ENABLE_STATUS_LED_BRIGHTNESS=1
+
 # Don't wait for buffers to idle on the client side before sending them to gamescope
 export vk_xwayland_wait_ready=false
 
-# Set refresh rate range and enable refresh rate switching
-export STEAM_DISPLAY_REFRESH_LIMITS=40,60
-
 # Let steam know it can unmount drives without superuser privileges
-if $steam_can_unmount
-then
-	export STEAM_ALLOW_DRIVE_UNMOUNT=1
-fi
+# no we can't
+#export STEAM_ALLOW_DRIVE_UNMOUNT=1
+export STEAM_ALLOW_DRIVE_UNMOUNT=0
+
+# Allow formatting external drives
+# no
+#export STEAM_ALLOW_DRIVE_ADOPT=1
+export STEAM_ALLOW_DRIVE_ADOPT=0
 
 # We no longer need to set GAMESCOPE_EXTERNAL_OVERLAY from steam, mangoapp now does it itself
 export STEAM_DISABLE_MANGOAPP_ATOM_WORKAROUND=1
 
 # Enable horizontal mangoapp bar
 export STEAM_MANGOAPP_HORIZONTAL_SUPPORTED=1
+
+# Scaling support
+export STEAM_GAMESCOPE_FANCY_SCALING_SUPPORT=1
+
+# Color management support
+export STEAM_GAMESCOPE_COLOR_MANAGED=1
+export STEAM_GAMESCOPE_VIRTUAL_WHITE=1
+
+# HDMI-CEC support
+export STEAM_ENABLE_CEC=1
 
 # Set input method modules for Qt/GTK that will show the Steam keyboard
 export QT_IM_MODULE=steam
@@ -163,22 +176,58 @@ export QT_QPA_PLATFORM_THEME=kde
 #export vblank_mode=0
 #export MESA_VK_WSI_PRESENT_MODE=immediate
 
+# This is already on by default on Galileo, but this enables it on Jupiter too
+# currently has high cpu usage on gamescope
+# provides fps limit when patched mesa is not present, in the form of a vulkan layer
+#export ENABLE_GAMESCOPE_WSI=1
+export ENABLE_GAMESCOPE_WSI=0
+
 # To play nice with the short term callback-based limiter for now
 export GAMESCOPE_LIMITER_FILE=$(mktemp /tmp/gamescope-limiter.XXXXXXXX)
 
+# Temporary crutch until dummy plane interactions / etc are figured out
+export GAMESCOPE_DISABLE_ASYNC_FLIPS=1
+
 export XCURSOR_THEME=steam
+export XCURSOR_SCALE=256
+
+# Chromium (and therefore Steam) ignore XCursor and use on the GTK config
+kwriteconfig5 --file gtk-3.0/settings.ini  --group Settings --key gtk-cursor-theme-name steam
 
 # Workaround for Steam login issue while Steam client change propagates out of Beta
 touch ~/.steam/root/config/SteamAppData.vdf || true
 
+board_name=$(cat /sys/class/dmi/id/board_name)
+if [[ $board_name = "Galileo" ]]; then
+	ui_background=/usr/share/plymouth/themes/steamos/steamos-galileo.png
+
+	# Set refresh rate range for the legacy refresh swtching UI
+	export STEAM_DISPLAY_REFRESH_LIMITS=45,90
+	export STEAM_GAMESCOPE_FORCE_HDR_DEFAULT=1
+	export STEAM_GAMESCOPE_FORCE_OUTPUT_TO_HDR10PQ_DEFAULT=1
+else
+	ui_background=/usr/share/plymouth/themes/steamos/steamos-jupiter.png
+
+	# Set refresh rate range for the legacy refresh swtching UI
+	export STEAM_DISPLAY_REFRESH_LIMITS=40,60
+fi
+export STEAM_UPDATEUI_PNG_BACKGROUND=$ui_background
 export STEAM_UPDATEUI_PNG_BACKGROUND=/usr/share/steamos/steamos.png
+
+# We previously shipped custom boot animations alongside the OS as uioverrides
+# These boot animations have now been integrated to the steam client so
+# they no longer need to be part of the OS.
+for file in ~/.local/share/Steam/config/uioverrides/movies/*.installed; do
+	echo "Removing file: ${file%.installed}"
+	rm -- "${file%.installed}" || true
+	rm -- "${file}" || true
+done
 
 ulimit -n 524288
 
 # Create run directory file for startup and stats sockets
 #   shellcheck disable=SC2030 # (broken warning)
-#tmpdir="$([[ -n ${XDG_RUNTIME_DIR+x} ]] && mktemp -p "$XDG_RUNTIME_DIR" -d -t gamescope.XXXXXXX)"
-tmpdir="$(mktemp -d -t gamescope.XXXXXXX)"
+tmpdir="$([[ -n ${XDG_RUNTIME_DIR+x} ]] && mktemp -p "$XDG_RUNTIME_DIR" -d -t gamescope.XXXXXXX)"
 socket="${tmpdir:+$tmpdir/startup.socket}"
 stats="${tmpdir:+$tmpdir/stats.pipe}"
 # Fail early if we don't have a proper runtime directory setup
@@ -192,35 +241,32 @@ fi
 free_disk_space_megs=$(df ~/ --output=avail -B1048576 | sed -n '2 p' | xargs)
 minimum_free_disk_space_needed_megs=500
 
-if $free_disk_space
-then
-	if [[ "$free_disk_space_megs" -lt "$minimum_free_disk_space_needed_megs" ]]; then
-		echo >&2 "gamescope-session: not enough disk space to proceed, trying to find game to delete"
+if [[ "$free_disk_space_megs" -lt "$minimum_free_disk_space_needed_megs" ]] && $free_disk_space ; then
+	echo >&2 "gamescope-session: not enough disk space to proceed, trying to find game to delete"
 
-		find ~/.local/share/Steam/steamapps/common/ -mindepth 1 -maxdepth 1 -type d -printf "%T@ %p\0" | sort -n -z | while IFS= read -r -d $'\0' line; do
-			timestamp=${line%% *}
-	                game_folder=${line#* }
+	find ~/.local/share/Steam/steamapps/common/ -mindepth 1 -maxdepth 1 -type d -printf "%T@ %p\0" | sort -n -z | while IFS= read -r -d $'\0' line; do
+		timestamp=${line%% *}
+                game_folder=${line#* }
 
-			[[ -d $game_folder ]]  || continue
+		[[ -d $game_folder ]]  || continue
 
-			acf=$(grep -F -- "$(basename -- "$game_folder")" ~/.local/share/Steam/steamapps/*.acf | grep \"installdir\" | cut -d: -f1)
-			[[ -e "$acf" ]] || continue
+		acf=$(grep -F -- "$(basename -- "$game_folder")" ~/.local/share/Steam/steamapps/*.acf | grep \"installdir\" | cut -d: -f1)
+		[[ -e "$acf" ]] || continue
 
-			echo >&2 "gamescope-session: deleting $(basename "$game_folder")"
-			appid=$(basename "$acf" | cut -d_ -f2 | cut -d. -f1)
+		echo >&2 "gamescope-session: deleting $(basename "$game_folder")"
+		appid=$(basename "$acf" | cut -d_ -f2 | cut -d. -f1)
 
-			# TODO leave a note for Steam to display UI to explain what happened, if this logic stays
-			# intentionally leave compatdata; could be unclouded save files there
-			rm -rf --one-file-system -- "$game_folder" "$acf" ~/.local/share/Steam/steamapps/shadercache/"$appid"
+		# TODO leave a note for Steam to display UI to explain what happened, if this logic stays
+		# intentionally leave compatdata; could be unclouded save files there
+		rm -rf --one-file-system -- "$game_folder" "$acf" ~/.local/share/Steam/steamapps/shadercache/"$appid"
 
-			free_disk_space_megs=$(df ~/ --output=avail -B1048576 | sed -n '2 p' | xargs)
-			[[ "$free_disk_space_megs" -lt "$minimum_free_disk_space_needed_megs" ]] || break
-		done
-	fi
+		free_disk_space_megs=$(df ~/ --output=avail -B1048576 | sed -n '2 p' | xargs)
+		[[ "$free_disk_space_megs" -lt "$minimum_free_disk_space_needed_megs" ]] || break
+	done
 fi
 
 export GAMESCOPE_STATS="$stats"
-#mkfifo -- "$stats"
+mkfifo -- "$stats"
 mkfifo -- "$socket"
 
 # Attempt to claim global session if we're the first one running (e.g. /run/1000/gamescope)
@@ -236,14 +282,6 @@ else
 	echo >&2 "!! Failed to claim global gamescope stats session"
 fi
 
-echo starting gamescope
-
-export
-ls /run/user/1000/
-
-#-T "$stats"`
-
-
 gamescope \
 	--generate-drm-mode fixed \
 	--xwayland-count 2 \
@@ -252,108 +290,90 @@ gamescope \
 	--hide-cursor-delay 3000 \
 	--max-scale 2 \
 	--fade-out-duration 200 \
-	-e -R "$socket" \
+	--cursor-scale-height 720 \
+	-e -R "$socket" -T "$stats" \
 	-O '*',eDP-1 \
-	--cursor-hotspot 5,3 --cursor /usr/share/steamos/steamos-cursor.png &
-
+	&
 gamescope_pid="$!"
 
-if $start_steam_outside_of_gamescope
+if read -r -t 3 response_x_display response_wl_display <> "$socket"; then
+	export DISPLAY="$response_x_display"
+	export GAMESCOPE_WAYLAND_DISPLAY="$response_wl_display"
+	# We're done!
+else
+	kill -9 "$gamescope_pid"
+	wait
+	exit 0
+	# SDDM will restart us
+fi
+
+xbindkeys -f /etc/xbindkeysrc
+
+steamargs=("-steamos3" "-steampal" "-steamdeck" "-gamepadui")
+
+# Input method support
+/usr/bin/ibus-daemon -d -r --panel=disable --emoji-extension=disable
+
+# steamargs+=("-steamfs")
+
+if $enable_powerbuttond
 then
-	# slower disks
-	sleep 5
+	(while true; do
+	    /usr/lib/hwsupport/powerbuttond
+	done) &
+fi
 
-	if read -r -t 3 response_x_display response_wl_display <> "$socket"; then
-		export DISPLAY="$response_x_display"
-		export GAMESCOPE_WAYLAND_DISPLAY="$response_wl_display"
-		# We're done!
-	else
-		echo failed starting gamescope
-		kill -9 "$gamescope_pid"
-		wait
-		exit 0
-		# SDDM will restart us
-	fi
+short_session_tracker_file="/tmp/steamos-short-session-tracker"
+short_session_duration=60
+short_session_count_before_reset=3
+SECONDS=0
 
-	xbindkeys -f /etc/xbindkeysrc
+short_session_count=$(< "$short_session_tracker_file" wc -l)
 
-	#steamargs=("-steamos3" "-steampal" "-gamepadui" "-steamdeck")
-	steamargs=("-steamos3" "-gamepadui" "-steamdeck")
+if [[ "$short_session_count" -ge "$short_session_count_before_reset" ]] && $deploy_bootstrap ; then
+	# TODO could detect if we're in the devkit case below and undo that instead
+	# instead of resetting the wrong thing
+	# also could print full list of files and sizes in the Steam dir and save as a diagnostic report
+	echo >&2 "gamescope-session: detected broken Steam, bootstrapping from OS copy..."
+	# at this point, might as well make sure we won't relaunch on a sideloaded build
+	rm -f -- "$HOME/devkit-game/devkit-steam"
+	mkdir -p ~/.local/share/Steam
+	# remove some caches and stateful things known to cause Steam to fail to start if corrupt
+	rm -rf --one-file-system ~/.local/share/Steam/config/widevine
+	# cleanup the steam config dir, i.e. ~/.steam. We should try to preserve registry.vdf if possible
+	steam_config_dir="$HOME/.steam"
+	steam_config_backup_dir="$HOME/dot-steam.bak.$(date +%s)"
+	registry_vdf="$steam_config_dir/registry.vdf"
+	registry_backup_vdf="$steam_config_backup_dir/.steam/registry.vdf"
+	mv "$steam_config_dir" "$steam_config_backup_dir"
+	mkdir -p "$steam_config_dir"
+	cp -f "$registry_backup_vdf" "$registry_vdf" || true
+	# restore clean copy of binaries from RO partition
+	tar xf /usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -C ~/.local/share/Steam
+	# rearm
+	rm "$short_session_tracker_file"
+fi
 
-	# Input method support
-	/usr/bin/ibus-daemon -d -r --panel=disable --emoji-extension=disable
+if [[ -x $HOME/devkit-game/devkit-steam ]]; then
+	steam_notif_daemon &
+	galileo-mura-setup &
+	(while true; do
+		mangoapp
+	done) &
+	"$HOME"/devkit-game/devkit-steam "${steamargs[@]}"
+else
+	steam_notif_daemon &
+	galileo-mura-setup &
+	(while true; do
+		mangoapp
+	done) &
+	steam "${steamargs[@]}"
+fi
 
-	# steamargs+=("-steamfs")
-
-	if $power_button_handler
-	then
-		(while true; do
-		    /usr/lib/hwsupport/power-button-handler.py
-		done) &
-	fi
-
-
-	if $short_session_detection
-	then
-		short_session_tracker_file="/tmp/steamos-short-session-tracker"
-		short_session_duration=60
-		short_session_count_before_reset=3
-		SECONDS=0
-
-		short_session_count=$(< "$short_session_tracker_file" wc -l)
-
-		if [[ "$short_session_count" -ge "$short_session_count_before_reset" ]]; then
-			# TODO could detect if we're in the devkit case below and undo that instead
-			# instead of resetting the wrong thing
-			# also could print full list of files and sizes in the Steam dir and save as a diagnostic report
-			echo >&2 "gamescope-session: detected broken Steam, bootstrapping from OS copy..."
-			mkdir -p ~/.local/share/Steam
-			# remove some caches and stateful things known to cause Steam to fail to start if corrupt
-			rm -rf --one-file-system ~/.local/share/Steam/config/widevine
-			# restore clean copy of binaries from RO partition
-			tar xf /usr/lib/steam/bootstraplinux_ubuntu12_32.tar.xz -C ~/.local/share/Steam
-			# rearm
-			rm "$short_session_tracker_file"
-		fi
-	fi
-
-	# This will re-send automount notifications for steam, and has a builtin timeout to wait for steam to come up.
-	# _eventually_ steam should learn to talk to udisks so we don't have to rube goldberg this info to it.
-	if $steamos_automounts
-	then
-		/usr/bin/steamos-polkit-helpers/steamos-retrigger-automounts
-	fi
-
-	if false
-	then
-		if ! [ -e /sys/class/drm/card0 ]
-		then
-			card=$(ls /sys/class/drm | grep -E '^card[0-9]+$')
-			bbe -e "s#/sys/class/drm/card0#/sys/class/drm/$card#" ~/.local/share/Steam/ubuntu12_32/steamclient.so > /tmp/patched_1
-			bbe -e "s/card0-eDP-1/${card}-eDP-1/" /tmp/patched_1 > /tmp/patched_2
-			cp /tmp/patched_2 ~/.local/share/Steam/ubuntu12_32/steamclient.so
-			rm /tmp/patched_1 /tmp/patched_2
-		fi
-	fi
-
-	if [[ -x $HOME/devkit-game/devkit-steam ]]; then
-		mangoapp &
-		"$HOME"/devkit-game/devkit-steam "${steamargs[@]}"
-	else
-		mangoapp &
-		echo starting steam
-		steam "${steamargs[@]}"
-		echo steam ended
-	fi
-
-	if $short_session_detection
-	then
-		if [[ "$SECONDS" -lt "$short_session_duration" ]]; then
-			echo "frog" >> "$short_session_tracker_file"
-		else
-			rm "$short_session_tracker_file"
-		fi
-	fi
+if [[ "$SECONDS" -lt "$short_session_duration" ]]; then
+	echo "frog" >> "$short_session_tracker_file"
+else
+	rm "$short_session_tracker_file"
 fi
 
 # Ask gamescope to exit nicely
