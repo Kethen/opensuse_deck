@@ -75,7 +75,7 @@ cp -r %{SOURCE0}/. %{buildroot}
 /usr/share/polkit-1/rules.d/70-deck-time.rules
 /usr/share/polkit-1/rules.d/70-deck-hostname.rules
 /usr/bin/steamos-polkit-helpers/steamos-priv-write
-/usr/share/polkit-1/actions/deck_priv_write
+/usr/share/polkit-1/actions/deck_priv_write.policy
 
 %changelog
 * Tue Aug 08 2023 Katharine Chui <kwchuiaa@connect.ust.hk> - 0.1
