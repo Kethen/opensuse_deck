@@ -20,8 +20,6 @@ Requires: xhost
 Requires: mangohud
 Requires: steam
 Requires: mangoapp
-Requires: mozilla-openh264
-Requires: gstreamer-1.20-plugin-openh264
 Requires: ibus
 Requires: breeze5-cursors
 Requires: gamescope
